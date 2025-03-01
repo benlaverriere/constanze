@@ -11,6 +11,7 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.kord)
     implementation(libs.dotenv)
+    implementation(libs.spotify)
 }
 
 testing {

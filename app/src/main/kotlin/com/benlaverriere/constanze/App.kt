@@ -1,5 +1,7 @@
 package com.benlaverriere.constanze
 
+import com.adamratzman.spotify.SpotifyScope
+import com.adamratzman.spotify.getSpotifyAuthorizationUrl
 import io.github.cdimascio.dotenv.dotenv
 import dev.kord.core.Kord
 import dev.kord.core.entity.ReactionEmoji
@@ -17,17 +19,20 @@ class App {
 }
 
 suspend fun main() {
-    val kord = Kord(dotenv()["DISCORD_BOT_TOKEN"])
-    kord.on<MessageCreateEvent> { // runs every time a message is created that our bot can read
-
-        // ignore other bots, even ourselves. We only serve humans here!
+    val dotenv = dotenv()
+    val kord = Kord(dotenv["DISCORD_BOT_TOKEN"])
+    kord.on<MessageCreateEvent> {
         if (message.author?.isBot != false) return@on
 
-        // check if our command is being invoked
-        if (message.content != "!ping") return@on
+        if (message.content != "!link") return@on
 
-        // all clear, give them the pong!
-        message.channel.createMessage("pong!")
+        val url: String = getSpotifyAuthorizationUrl(
+            SpotifyScope.PlaylistReadPrivate,
+            SpotifyScope.PlaylistModifyPrivate,
+            clientId = dotenv["SPOTIFY_CLIENT_ID"],
+            redirectUri = "https://benlaverriere.com", // redirect to Discord itself?
+        )
+        message.channel.createMessage(url)
     }
     kord.on<ReactionAddEvent> {
         if (this.emoji != ReactionEmoji.Unicode("\uD83C\uDFA7")) return@on
