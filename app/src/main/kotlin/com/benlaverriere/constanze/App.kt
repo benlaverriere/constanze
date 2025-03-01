@@ -2,7 +2,9 @@ package com.benlaverriere.constanze
 
 import io.github.cdimascio.dotenv.dotenv
 import dev.kord.core.Kord
+import dev.kord.core.entity.ReactionEmoji
 import dev.kord.core.event.message.MessageCreateEvent
+import dev.kord.core.event.message.ReactionAddEvent
 import dev.kord.core.on
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
@@ -26,6 +28,11 @@ suspend fun main() {
 
         // all clear, give them the pong!
         message.channel.createMessage("pong!")
+    }
+    kord.on<ReactionAddEvent> {
+        if (this.emoji != ReactionEmoji.Unicode("\uD83C\uDFA7")) return@on
+
+        this.channel.createMessage("I heard that!")
     }
 
     kord.login {
